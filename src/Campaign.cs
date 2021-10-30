@@ -76,7 +76,7 @@ namespace CustomCampaign
             }
         }
 
-        public Tier GetHighestUnlockedTier()
+        public Tier GetHighestUnlockedTier(out bool lastTier)
         {
             var _tiers = CampaignStructure.I.GetCampaign(CampaignStructure.I.mCurrentCampaignDifficulty).tiers;
             int index = 0;
@@ -87,7 +87,7 @@ namespace CustomCampaign
                 break;
             }*/
             //if (index == 0) return Tiers[0];
-            bool lastTier = true;
+            lastTier = true;
             for(int i = 0; i < CampaignController.SelectedCampaign.Tiers.Count; i++)
             {
                 if (CampaignController.SelectedCampaign.Tiers[i].IsThreshholdMet(CampaignStructure.I.mCurrentCampaignDifficulty)) continue;

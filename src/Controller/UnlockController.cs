@@ -17,10 +17,31 @@ namespace CustomCampaign.Controller
         internal static string PrepareUnlock(CampaignUnlockPopup popup)
         {
             int tier = 0;
+            unlockIndex = 0;
             CampaignStructure.CampaignTier[] tiers = CampaignStructure.I.GetCampaign(CampaignStructure.I.mCurrentCampaignDifficulty).tiers;
-            tier = CampaignController.SelectedCampaign.GetHighestUnlockedTier().Index - 1;
-            if (tier < 0) tier = 0;
-            if (tier + 2 == CampaignController.SelectedCampaign.Tiers.Count) tier += 1;
+            bool unlockFound = false;
+            foreach(Campaign.Tier t in CampaignController.SelectedCampaign.Tiers)
+            {
+                unlockIndex = 0;
+                if(t.Unlocks != null)
+                {
+                    foreach(Campaign.Unlock u in t.Unlocks)
+                    {
+                        if (!u.Unlocked)
+                        {
+                            tier = t.Index;
+                            unlockFound = true;
+                            break;
+                        }
+                        unlockIndex++;
+                    }
+                }
+                if (unlockFound) break;
+            }
+            //if (tier == 4) tier -= 1;
+            //tier = CampaignController.SelectedCampaign.GetHighestUnlockedTier(out bool lastTier).Index - 1;
+            //if (tier < 0) tier = 0;
+            //if (lastTier) tier += 1;
             List<CampaignUnlockPopup.UnlockInfo> unlocks = new List<CampaignUnlockPopup.UnlockInfo>();
             CampaignUnlockPopup.UnlockInfo unlock = popup.GetUnlockInfo(tiers[tier].unlocks[unlockIndex].unlockName);
             var _u = CampaignController.SelectedCampaign.Tiers[tier].Unlocks[unlockIndex];
@@ -28,7 +49,7 @@ namespace CustomCampaign.Controller
             unlock.token = _u.Token;
             unlocks.Add(unlock);
             popup.unlockInfo = new UnhollowerBaseLib.Il2CppReferenceArray<CampaignUnlockPopup.UnlockInfo>(unlocks.ToArray());
-            unlockIndex++;
+            //unlockIndex++;
             awaitUnlock = _u;
             string unlockText = "New ";
             unlockText += _u.Type == Campaign.UnlockType.Arena ? "Arena:" : _u.Type == Campaign.UnlockType.Gun ? "Gun:" : "Song:";
@@ -71,7 +92,7 @@ namespace CustomCampaign.Controller
 
         internal static void ResetIndex()
         {
-            if (unlockIndex == 1) unlockIndex = 0;
+            //if (unlockIndex == 1) unlockIndex = 0;
         }
         #endregion
         #region Arena

@@ -30,7 +30,7 @@ namespace CustomCampaign
                 {
                     if(Main.State == State.Custom)
                     {
-                        Campaign.Tier tier = CampaignController.SelectedCampaign.GetHighestUnlockedTier();
+                        Campaign.Tier tier = CampaignController.SelectedCampaign.GetHighestUnlockedTier(out bool _);
                         if(tier != null)
                         {
                             if(tier.Unlocks.Any(it => it.Type == Campaign.UnlockType.Arena))

@@ -1,0 +1,9 @@
+.vs
+*.sln
+*.user
+bin
+lib
+obj
+packages
+Properties
+*.config

@@ -98,6 +98,13 @@ namespace CustomCampaign
                         CustomCampaignSelectPanel.GoToPanel();
                     }
                 }
+                else if(page == OptionsMenu.Page.SongCustomize)
+                {
+                    if(Main.State == State.Select)
+                    {
+                        __instance.ShowPage(OptionsMenu.Page.Main);
+                    }
+                }
 
             }
         }

@@ -125,7 +125,7 @@ namespace CustomCampaign.Controller
         internal static bool IsGunUnlocked(string gunName)
         {
             if ((!checkGunNameLeft && !checkGunNameRight) || gunName is null) return true;
-            if (OptionsMenu.I.mPage == OptionsMenu.Page.Customization)
+            if (OptionsMenu.I.mPage == OptionsMenu.Page.Customization || OptionsMenu.I.mPage == OptionsMenu.Page.SongCustomize)
             {
                 foreach (Campaign campaign in Main.Campaigns)
                 {

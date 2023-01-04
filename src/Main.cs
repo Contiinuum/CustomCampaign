@@ -60,17 +60,15 @@ namespace CustomCampaign
         {
             //GetInternalSongList();
             Campaigns = IOHandler.LoadCampaigns();
-            MelonLogger.Msg("Loaded " + Campaigns.Count + " custom campaigns");
             if(!reload) Integrations.SetCampaignSongs();
         }
 
         private static void GetInternalSongList()
         {
             InternalSongList = new List<SongList.SongData>();
-            for (int i = 0; i < SongList.I.songs.Count; i++)
-            {
-                InternalSongList.Add(SongList.I.songs[i]);
-            }
+            var songs = SongList.I.songs;
+            for (int i = 0; i < SongList.I.songs._items.Count; i++)
+                InternalSongList.Add(songs._items[i]);
         }
 
         internal static List<string> GetAllSongs()

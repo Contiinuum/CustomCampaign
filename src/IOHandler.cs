@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.IO;
 using CustomCampaign.Controller;
 using System.IO.Compression;
+using MelonLoader;
 
 namespace CustomCampaign
 {
@@ -25,6 +26,7 @@ namespace CustomCampaign
             List<Campaign> loadedCampaigns = new List<Campaign>();
 
             string[] directories = Directory.GetDirectories(customCampaignFolder);
+            bool needArenaReload = false;
             for(int i = 0; i < directories.Length; i++)
             {
                 string[] files = Directory.GetFiles(directories[i]);
@@ -33,12 +35,17 @@ namespace CustomCampaign
                     string ext = Path.GetExtension(files[j]);
                     if (ext == ".campaign")
                     {
-                        Campaign campaign = LoadCampaign(files[j], directories[i]);
+                        Campaign campaign = LoadCampaign(files[j], directories[i], out bool needReload);
                         if (campaign is null) continue;
+                        needArenaReload |= needReload;
                         loadedCampaigns.Add(campaign);
                     }                  
                 }
             }
+            
+            if(needArenaReload)
+                Integrations.ReloadArenas();
+            
             return loadedCampaigns;
         }
 
@@ -52,42 +59,33 @@ namespace CustomCampaign
             File.WriteAllText(Path.Combine(campaign.FilePath, filename), json);
         }
 
-        private static Campaign LoadCampaign(string campaignFile, string filepath)
+        private static Campaign LoadCampaign(string campaignFile, string filepath, out bool needArenaReload)
         {
+            needArenaReload = false;
+            
             try
             {
                 Campaign campaign = null;
-                bool reloadArenas = false;
-                bool reloadGuns = false;
                 using (StreamReader reader = new StreamReader(campaignFile))
                 {
                     string json = reader.ReadToEnd();
                     campaign = JsonConvert.DeserializeObject<Campaign>(json);
                     campaign.FilePath = filepath;
-                    //for (int i = 0; i < campaign.Tiers.Count; i++) campaign.Tiers[i].Index = i;
-                    //for (int i = 0; i < campaign.Songs.Count; i++) campaign.Songs[i].Index = i;
                 }
                 foreach (Campaign.Tier tier in campaign.Tiers)
                 {
                     foreach (Campaign.Unlock unlock in tier.Unlocks)
                     {
                         if (unlock.Unlocked || unlock.Type == Campaign.UnlockType.None || unlock.Type == Campaign.UnlockType.Song) continue;
-                        if (unlock.Type == Campaign.UnlockType.Gun) reloadGuns = true;
-                        else if (unlock.Type == Campaign.UnlockType.Arena) reloadArenas = true;
+                        if (unlock.Type == Campaign.UnlockType.Arena) needArenaReload = true;
                         MoveUnlock(unlock, campaign.FilePath);
                     }
-                    foreach (Campaign.Song song in tier.Songs)
-                    {
-                        //MoveSong(campaign.FilePath, song.FileName);
-                    }
                 }
-                if (reloadArenas) Integrations.ReloadArenas();
-                //if (reloadGuns) CustomModelLoader.I.SetUpModels();
                 return campaign;
             }
-            catch
+            catch(Exception e)
             {
-                MelonLoader.MelonLogger.Warning($"Encountered an error while loading {Path.GetFileName(campaignFile)} - please check if the file has valid json.");
+                MelonLogger.Warning($"Encountered an error while loading {Path.GetFileName(campaignFile)} - please check if the file has valid json. Error: {e.Message}");
                 return null;
             }
 
@@ -148,6 +146,7 @@ namespace CustomCampaign
         {
             try
             {
+
                 string origin = Path.Combine(basePath, crypticName);
                 if (File.Exists(origin))
                 {
@@ -160,7 +159,7 @@ namespace CustomCampaign
             }
             catch(Exception ex)
             {
-                MelonLoader.MelonLogger.Warning("Couldn't move file " + realName + ": " + ex.Message);
+                MelonLogger.Warning("Couldn't move file " + realName + ": " + ex.Message);
             }
             
         }

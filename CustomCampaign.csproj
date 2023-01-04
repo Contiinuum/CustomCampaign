@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>D:\Games\Steam\steamapps\common\Audica\MelonLoader\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="ArenaLoader">
       <HintPath>D:\Games\Steam\steamapps\common\Audica\Mods\ArenaLoader.dll</HintPath>
     </Reference>
@@ -70,8 +73,7 @@
       <HintPath>lib\Il2CppSystem.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MelonLoader, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MelonLoader">
       <HintPath>D:\Games\Steam\steamapps\common\Audica\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
